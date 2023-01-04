@@ -1,7 +1,7 @@
 import re
 
 from src.adb.domain.device import Device
-from src.sub_process.domain.commands.adb_commands import AdbCommands
+from src.adb.domain.commands.adb_commands import AdbCommands
 from src.sub_process.service import subprocess_service
 
 
