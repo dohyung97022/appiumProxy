@@ -1,13 +1,24 @@
 import time
 from subprocess import Popen, PIPE
+from src.dot_env.domain.sudo_env import SudoEnv
 
 
 # subprocess 시작
-def start(cmd: list[str], cwd: str = '/') -> Popen:
-    return Popen(cmd, stdout=PIPE, stderr=PIPE, cwd=cwd)
+def start(cmd: list[str], cwd: str = '/', shell: bool = False, sudo: bool = False) -> Popen:
+    if sudo:
+        sudo_cmd = ['sudo', '-S']
+        sudo_cmd.extend(cmd)
+        cmd = sudo_cmd
+
+    if shell:
+        cmd = [' '.join(cmd)]
+
+    return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=cwd, shell=shell)
 
 
-def communicate(subprocess: Popen):
+def communicate(subprocess: Popen, sudo: bool = False):
+    if sudo:
+        subprocess.communicate(bytes(SudoEnv.sudo_password, 'utf-8'))
     return subprocess.communicate()
 
 
