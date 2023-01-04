@@ -130,3 +130,6 @@ dmypy.json
 
 # intellij idea 세팅값 무시
 .idea
+
+# 3proxy configuration 파일 무시
+*.cfg
