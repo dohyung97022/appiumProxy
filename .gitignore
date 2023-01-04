@@ -133,3 +133,6 @@ dmypy.json
 
 # 3proxy configuration 파일 무시
 *.cfg
+
+# import 설치용 txt 무시
+requirements.txt
