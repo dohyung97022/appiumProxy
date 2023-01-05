@@ -1,5 +1,5 @@
 from src.adb.service.adb_service import check_connect_device_thread_job, reconnect_device_thread_job
-from src.proxy.service.proxy_service import check_connect_device_ipv4_thread_job
+from src.ifconfig.service.ifconfig_service import check_connect_device_ipv4_thread_job
 from src.utils.module import module_utils
 from src.utils.thread.thread_utils import BatchJob
 
