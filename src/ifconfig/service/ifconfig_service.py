@@ -1,30 +1,50 @@
 import re
-
 from src.ifconfig.domain.commands.ifconfig_commands import IfconfigCommands
-from src.ifconfig.domain.ifconfig_interface import IfconfigInterface
 from src.sub_process.service import subprocess_service
 
 
-def get_ifconfig_interface(interface_name: str) -> (bool, IfconfigInterface):
-    process = subprocess_service.start(IfconfigCommands.get_ifconfig(interface_name))
+def get_ifconfig(interface_name: str) -> (bool, str):
+    process = subprocess_service.start(IfconfigCommands.get_ifconfig_of_interface(interface_name))
     stdout, stderr = subprocess_service.communicate(process)
     subprocess_service.wait_until_finished(process)
     subprocess_service.kill(process)
 
-    if stderr != b'':
+    if stderr != b'' or stdout is None:
         return False, None
 
-    msg = stdout.decode('utf-8')
+    return True, stdout.decode('utf-8')
 
-    ipv4 = re.findall(f'inet ([^\s]*)  netmask', msg)
+
+def get_all_interface_names() -> (bool, str):
+    process = subprocess_service.start(IfconfigCommands.get_ifconfig())
+    stdout, stderr = subprocess_service.communicate(process)
+    subprocess_service.wait_until_finished(process)
+    subprocess_service.kill(process)
+
+    if stderr != b'' or stdout is None:
+        return False, None
+
+    interface_names = re.findall(f'([^\s]*): flags=', stdout.decode('utf-8'))
+
+    return True, interface_names
+
+
+def get_ipv4(ifconfig: str) -> (bool, str):
+    ipv4 = re.findall(f'inet ([^\s]*)  netmask', ifconfig)
 
     if len(ipv4) == 0:
         return False, None
 
-    ipv4 = ipv4[0]
+    return True, ipv4[0]
 
-    ifconfig_interface = IfconfigInterface(
-        internal_ipv4=ipv4
-    )
 
-    return True, ifconfig_interface
+def get_broadcast(ifconfig: str) -> (bool, str):
+    bcast = re.findall(f'Bcast:([^\s]*)', ifconfig)
+    broadcast = re.findall(f'broadcast ([^\s]*)', ifconfig)
+
+    broadcast.extend(bcast)
+
+    if len(broadcast) == 0:
+        return False, None
+
+    return True, broadcast[0]
