@@ -1,3 +1,4 @@
+from src.adb.domain.device import Device
 from src.proxy.domain.proxy_user import ProxyUser
 from src.proxy.domain.proxy_auth import ProxyAuth
 from src.proxy.domain.proxy_connection import ProxyConnection
@@ -17,9 +18,9 @@ class ProxyConfiguration:
     is_flush: bool
 
     def __init__(self,
-                 users: list[ProxyUser],
-                 auth: ProxyAuth,
-                 connections: list[ProxyConnection],
+                 users: list[ProxyUser] = None,
+                 connections: list[ProxyConnection] = None,
+                 auth: ProxyAuth = ProxyAuth.STRONG,
                  is_daemon: bool = True,
                  name_server: str = '8.8.8.8',
                  name_server_cache: str = '65536',
@@ -29,9 +30,17 @@ class ProxyConfiguration:
                  setuid: int = 13,
                  is_flush: bool = True,
                  ):
-        self.users = users
+        if users is None:
+            self.users = []
+        else:
+            self.users = users
+
+        if connections is None:
+            self.connections = []
+        else:
+            self.connections = connections
+
         self.auth = auth
-        self.connections = connections
         self.is_daemon = is_daemon
         self.name_server = name_server
         self.name_server_cache = name_server_cache
@@ -41,8 +50,15 @@ class ProxyConfiguration:
         self.setuid = setuid
         self.is_flush = is_flush
 
-    def create_configuration_file(self):
-        file = open("3proxy.cfg", "w+")
+    def get_device_connection(self, device: Device):
+        for i in range(len(self.connections)):
+            if self.connections[i].device.key == device.key:
+                return self.connections[i]
+
+        return None
+
+    def create_configuration_file(self, configuration_file: str = "3proxy.cfg"):
+        file = open(configuration_file, "w+")
 
         if self.is_daemon:
             file.write("daemon\n")
@@ -65,7 +81,7 @@ class ProxyConfiguration:
         file.write("\n")
 
         for connection in self.connections:
-            file.write(f"proxy -p{connection.to_port} -e{connection.from_internal_ip}\n")
+            file.write(f"proxy -p{connection.to_port} -e{connection.device.ipv4} -De{connection.device.interface_name}\n")
 
         if self.is_flush:
             file.write("flush\n")

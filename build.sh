@@ -1,6 +1,6 @@
-SERVER_USERNAME=odroid
-SERVER_IP=192.168.35.139
-SERVER_PROJECT_LOCATION=/home/odroid/proxy
+SERVER_USERNAME=ubuntu
+SERVER_IP=192.168.35.55
+SERVER_PROJECT_LOCATION=/home/ubuntu/proxy
 SERVER_PASSWORD=password
 
 activate_venv() {

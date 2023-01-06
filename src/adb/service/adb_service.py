@@ -84,20 +84,21 @@ def reconnect_usb_tethering(device: Device):
 
 def check_connect_device_thread_job():
     devices = get_all_devices()
+    key_to_device: dict[str, Device] = {}
 
     for adb_device in devices:
         # global_params 안에 있을 경우
         device = global_params.key_to_device.get(adb_device.key, None)
         if device is None:
             # global_params 안에 저장되지 않을 경우
-            global_params.key_to_device[adb_device.key] = adb_device
+            key_to_device[adb_device.key] = adb_device
             device = adb_device
 
         # 기기의 테더링 ifconfig 반환
         success, device_ifconfig = get_device_ifconfig(device.key, interface_name='rndis0')
         if not success:
             device.broadcast = None
-            global_params.key_to_device[device.key] = device
+            key_to_device[device.key] = device
             continue
 
         # 기기의 테더링 broadcast 반환
@@ -106,12 +107,14 @@ def check_connect_device_thread_job():
             raise f"broadcast 를 읽을 수 없습니다. device_ifconfig: {device_ifconfig}"
 
         device.broadcast = device_broadcast
-        global_params.key_to_device[device.key] = device
+        key_to_device[device.key] = device
+
+    global_params.key_to_device = key_to_device
 
 
 def reconnect_device_thread_job():
     devices = global_params.key_to_device.values()
     for device in devices:
         print(f'checking device key : {device.key} ipv4 : {device.ipv4} broadcast : {device.broadcast}')
-        if device.ipv4 is None or device.ipv4 is '127.0.0.1' or device.broadcast is None:
+        if not device.is_valid_usb_tethering_connection():
             reconnect_usb_tethering(device)

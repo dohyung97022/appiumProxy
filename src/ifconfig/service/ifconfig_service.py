@@ -30,6 +30,15 @@ def get_all_interface_names() -> (bool, str):
     return True, interface_names
 
 
+def get_interface_name(ifconfig: str) -> (bool, str):
+    interface_names = re.findall(f'([^\s]*): flags=', ifconfig)
+
+    if len(interface_names) == 0:
+        return False, None
+
+    return True, interface_names[0]
+
+
 def get_ipv4(ifconfig: str) -> (bool, str):
     ipv4 = re.findall(f'inet ([^\s]*)  netmask', ifconfig)
 
@@ -65,8 +74,9 @@ def check_connect_device_ipv4_thread_job():
             # 읽은 뒤에 바로 interface 가 사라진 경우
             continue
 
-        # interface broadcast 반환
+        # broadcast, name 반환
         _, broadcast = get_broadcast(ifconfig)
+        _, interface_name = get_interface_name(ifconfig)
 
         # broadcast 와 일치하는 device 반환
         devices = global_params.key_to_device.values()
@@ -79,5 +89,4 @@ def check_connect_device_ipv4_thread_job():
             success, ipv4 = get_ipv4(ifconfig)
             if success:
                 device.ipv4 = ipv4
-                global_params.key_to_device[device.key] = device
-                print(f'connected device {device.key}, {device.ipv4}')
+                device.interface_name = interface_name

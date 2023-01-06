@@ -1,4 +1,4 @@
-SERVER_PROJECT_LOCATION=/home/odroid/proxy
+SERVER_PROJECT_LOCATION=/home/ubuntu/proxy
 
 unzip_project() {
   rm -f -r appiumProxy
@@ -16,4 +16,5 @@ cd ${SERVER_PROJECT_LOCATION}
 unzip_project
 cd appiumProxy
 install_venv
-python3 ${SERVER_PROJECT_LOCATION}/appiumProxy/main.py
+sudo apt-get -y install android-tools-adb
+sudo python3 ${SERVER_PROJECT_LOCATION}/appiumProxy/main.py
