@@ -49,8 +49,7 @@ def check_connect_device_into_3proxy_thread_job():
         if prev_connection is not None:
             connection.to_port = prev_connection.to_port
         else:
-            global_params.proxy_port_cnt = global_params.proxy_port_cnt + 1
-            connection.to_port = global_params.proxy_port_cnt
+            connection.to_port = global_params.key_to_port[device.key]
 
         connection.device = device
 

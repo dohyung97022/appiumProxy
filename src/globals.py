@@ -6,6 +6,7 @@ from src.proxy.domain.proxy_configuration import ProxyConfiguration
 
 class GlobalParams:
     key_to_device: dict[str, Device] = {}
+    key_to_port: dict[str, str] = {}
 
     proxy_server_process: Popen
     proxy_configuration: ProxyConfiguration = ProxyConfiguration()
