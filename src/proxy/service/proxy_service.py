@@ -1,5 +1,6 @@
 import os
 
+from src.adb.service import adb_service
 from src.globals import global_params
 from src.proxy.domain.commands.proxy_commands import ProxyCommands
 from src.proxy.domain.proxy_configuration import ProxyConfiguration
@@ -30,6 +31,16 @@ def reboot_proxy_configuration():
 
 def create_configuration_file(proxy_configuration: ProxyConfiguration):
     proxy_configuration.create_configuration_file()
+
+
+def proxy_port_reconnect_ip(port: str) -> bool:
+    success, device_key = global_params.get_device_key_of_port(int(port))
+    if not success:
+        raise '해당 포트에 할당된 device 가 없습니다.'
+
+    adb_service.device_reconnect_lte(device_key)
+
+    return True
 
 
 def check_connect_device_into_3proxy_thread_job():

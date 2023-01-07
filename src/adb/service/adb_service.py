@@ -83,17 +83,27 @@ def get_device_ifconfig(adb_key: str, interface_name: str = 'rndis0') -> (bool, 
     return True, stdout.decode('utf-8')
 
 
-def reconnect_usb_tethering(device: Device):
-    print(f'reconnecting device : {device.key}')
-    wifi_off(device.key)
+def device_reconnect_tethering(device_key: str):
+    print(f'reconnect device tethering : {device_key}')
+    wifi_off(device_key)
     time.sleep(3)
-    airplane_mode_off(device.key)
+    airplane_mode_off(device_key)
     time.sleep(3)
-    lte_on(device.key)
+    lte_on(device_key)
     time.sleep(3)
-    usb_tethering_off(device.key)
+    usb_tethering_off(device_key)
     time.sleep(3)
-    usb_tethering_on(device.key)
+    usb_tethering_on(device_key)
+
+
+def device_reconnect_lte(device_key: str):
+    print(f'reconnect device LTE : {device_key}')
+    airplane_mode_on(device_key)
+    time.sleep(3)
+    airplane_mode_off(device_key)
+    time.sleep(3)
+    lte_on(device_key)
+    time.sleep(3)
 
 
 def check_connect_device_thread_job():
@@ -136,4 +146,4 @@ def reconnect_device_thread_job():
     for device in devices:
         print(f'checking device key : {device.key} ipv4 : {device.ipv4} broadcast : {device.broadcast}')
         if not device.is_valid_usb_tethering_connection():
-            reconnect_usb_tethering(device)
+            device_reconnect_tethering(device.key)
