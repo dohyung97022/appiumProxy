@@ -29,5 +29,13 @@ class AdbCommands:
         return ['adb', '-s', adb_key, 'shell', 'svc', 'data', 'disable']
 
     @classmethod
+    def wifi_on(cls, adb_key: str) -> list[str]:
+        return ['adb', '-s', adb_key, 'shell', 'svc', 'wifi', 'enable']
+
+    @classmethod
+    def wifi_off(cls, adb_key: str) -> list[str]:
+        return ['adb', '-s', adb_key, 'shell', 'svc', 'wifi', 'disable']
+
+    @classmethod
     def get_device_ifconfig(cls, adb_key: str, interface_name: str):
         return ['adb', '-s', adb_key, 'shell', 'ifconfig', interface_name]

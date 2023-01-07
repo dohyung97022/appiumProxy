@@ -59,6 +59,18 @@ def lte_off(adb_key: str):
     subprocess_service.kill(process)
 
 
+def wifi_on(adb_key: str):
+    process = subprocess_service.start(AdbCommands.wifi_on(adb_key))
+    subprocess_service.wait_until_finished(process)
+    subprocess_service.kill(process)
+
+
+def wifi_off(adb_key: str):
+    process = subprocess_service.start(AdbCommands.wifi_off(adb_key))
+    subprocess_service.wait_until_finished(process)
+    subprocess_service.kill(process)
+
+
 def get_device_ifconfig(adb_key: str, interface_name: str = 'rndis0') -> (bool, str):
     process = subprocess_service.start(AdbCommands.get_device_ifconfig(adb_key, interface_name))
     stdout, stderr = subprocess_service.communicate(process)
@@ -73,6 +85,8 @@ def get_device_ifconfig(adb_key: str, interface_name: str = 'rndis0') -> (bool, 
 
 def reconnect_usb_tethering(device: Device):
     print(f'reconnecting device : {device.key}')
+    wifi_off(device.key)
+    time.sleep(3)
     airplane_mode_off(device.key)
     time.sleep(3)
     lte_on(device.key)
