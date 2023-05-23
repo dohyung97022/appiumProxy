@@ -120,8 +120,7 @@ def check_connect_device_thread_job():
         # global_params 기기마다 신규 포트 지정
         port = global_params.key_to_port.get(adb_device.key, None)
         if port is None:
-            global_params.key_to_port[adb_device.key] = global_params.proxy_port_cnt
-            global_params.proxy_port_cnt = global_params.proxy_port_cnt + 1
+            global_params.key_to_port[adb_device.key] = global_params.get_available_port()
 
         # 기기의 테더링 ifconfig 반환
         success, device_ifconfig = get_device_ifconfig(device.key, interface_name='rndis0')

@@ -10,7 +10,7 @@ class GlobalParams:
 
     proxy_server_process: Popen
     proxy_configuration: ProxyConfiguration = ProxyConfiguration()
-    proxy_port_cnt: int = 3128
+    proxy_port_start: int = 3128
 
     def get_device_key_of_port(self, port: int) -> (bool, str):
         for device_key, device_port in self.key_to_port.items():
@@ -18,6 +18,14 @@ class GlobalParams:
                 return True, device_key
 
         return False, None
+
+    def get_available_port(self):
+        proxy_port = self.proxy_port_start
+
+        while proxy_port in self.key_to_port.values():
+            proxy_port = proxy_port + 1
+
+        return proxy_port
 
 
 global_params = GlobalParams()
