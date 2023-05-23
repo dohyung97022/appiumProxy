@@ -9,6 +9,10 @@ from src.proxy.domain.proxy_user import ProxyUser
 from src.sub_process.service import subprocess_service
 
 
+def get_all_proxy_port() -> list:
+    return list(global_params.key_to_port.values())
+
+
 def kill_all_proxy():
     process = subprocess_service.start(ProxyCommands.kill_all_proxy(), sudo=True)
     subprocess_service.communicate(process, sudo=True)
