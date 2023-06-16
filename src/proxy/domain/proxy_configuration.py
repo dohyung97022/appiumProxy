@@ -20,7 +20,7 @@ class ProxyConfiguration:
     def __init__(self,
                  users: list[ProxyUser] = None,
                  connections: list[ProxyConnection] = None,
-                 auth: ProxyAuth = ProxyAuth.STRONG,
+                 auth: ProxyAuth = ProxyAuth.NONE,
                  is_daemon: bool = True,
                  name_server: str = '8.8.8.8',
                  name_server_cache: str = '65536',
