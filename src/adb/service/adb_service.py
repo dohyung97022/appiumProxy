@@ -1,6 +1,7 @@
 import re
 import time
 
+from src.adb.domain.commands.device_state import DeviceState
 from src.adb.domain.device import Device
 from src.adb.domain.commands.adb_commands import AdbCommands
 from src.globals import global_params
@@ -111,6 +112,11 @@ def check_connect_device_thread_job():
     key_to_device: dict[str, Device] = {}
 
     for adb_device in devices:
+        # adb 의 권한이 지정되지 않은 경우
+        if adb_device.state == DeviceState.UNAUTHORIZED:
+            print(f'unauthorized device : {adb_device.key}, manual authorize is needed.')
+            continue
+
         # global_params 기기 지정
         device = global_params.key_to_device.get(adb_device.key, None)
         if device is None:
