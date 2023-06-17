@@ -39,6 +39,15 @@ def get_interface_name(ifconfig: str) -> (bool, str):
     return True, interface_names[0]
 
 
+def get_ethernet_key(ifconfig: str) -> (bool, str):
+    ethernet_keys = re.findall(f'[\s]* ether ([0-9:a-z]*)', ifconfig)
+
+    if len(ethernet_keys) == 0:
+        return False, None
+
+    return True, ethernet_keys[0]
+
+
 def get_ipv4(ifconfig: str) -> (bool, str):
     ipv4 = re.findall(f'inet ([^\s]*)  netmask', ifconfig)
 
@@ -46,18 +55,6 @@ def get_ipv4(ifconfig: str) -> (bool, str):
         return False, None
 
     return True, ipv4[0]
-
-
-def get_broadcast(ifconfig: str) -> (bool, str):
-    bcast = re.findall(f'Bcast:([^\s]*)', ifconfig)
-    broadcast = re.findall(f'broadcast ([^\s]*)', ifconfig)
-
-    broadcast.extend(bcast)
-
-    if len(broadcast) == 0:
-        return False, None
-
-    return True, broadcast[0]
 
 
 def check_connect_device_ipv4_thread_job():
@@ -70,23 +67,29 @@ def check_connect_device_ipv4_thread_job():
 
         # interface 반환
         success, ifconfig = get_ifconfig(interface_name)
+        # 읽은 뒤에 바로 interface 가 사라진 경우
         if not success:
-            # 읽은 뒤에 바로 interface 가 사라진 경우
             continue
 
-        # broadcast, name 반환
-        _, broadcast = get_broadcast(ifconfig)
+        # ethernet_key, interface_name 반환
         _, interface_name = get_interface_name(ifconfig)
-
-        # broadcast 와 일치하는 device 반환
+        success, ethernet_key = get_ethernet_key(ifconfig)
+        # ethernet_key 가 없는 ifconfig 일 경우
+        if not success:
+            continue
+        
+        # ethernet_key 와 일치하는 device 반환
         devices = global_params.key_to_device.values()
-        devices = list(filter(lambda device: device.broadcast == broadcast, devices))
+        devices = list(filter(lambda device: device.ethernet_key == ethernet_key, devices))
         device = devices[0] if len(devices) == 1 else None
+        if device is None:
+            continue
 
-        if device is not None:
+        # ipv4 조회
+        success, ipv4 = get_ipv4(ifconfig)
+        if not success:
+            continue
 
-            # 일치할 경우 ipv4 반환
-            success, ipv4 = get_ipv4(ifconfig)
-            if success:
-                device.ipv4 = ipv4
-                device.interface_name = interface_name
+        # ipv4 지정
+        device.ipv4 = ipv4
+        device.interface_name = interface_name
