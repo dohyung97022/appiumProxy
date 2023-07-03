@@ -14,6 +14,8 @@ def get_device_usb_connection(adb_key: str) -> (bool, str):
         return False, None
 
     usb_connections = re.findall(f'\[[0-9 ]+\.[0-9 ]+\] usb ([0-9-.]+)', stdout.decode('utf-8'))
+    if len(usb_connections) == 0:
+        return False, None
     recent_usb_connection = usb_connections.pop()
 
     return True, recent_usb_connection
