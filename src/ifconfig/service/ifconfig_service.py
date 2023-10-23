@@ -57,7 +57,18 @@ def get_ipv4(ifconfig: str) -> (bool, str):
     return True, ipv4[0]
 
 
-def check_connect_device_ipv4_thread_job():
+def get_ipv6(ifconfig: str) -> (bool, str):
+    ipv6s = re.findall(f'inet6 ([^\s]+) ([^\n]+)', ifconfig)
+
+    for ipv6 in ipv6s:
+        options = ipv6[1]
+        if '<global>' in options:
+            return True, ipv6[0]
+
+    return False, None
+
+
+def check_connect_device_ip_thread_job():
     # 모든 interface_name 반환
     success, interface_names = get_all_interface_names()
     if not success:
@@ -90,6 +101,12 @@ def check_connect_device_ipv4_thread_job():
         if not success:
             continue
 
-        # ipv4 지정
+        # ipv6 조회
+        success, ipv6 = get_ipv6(ifconfig)
+        if not success:
+            continue
+
+        # ip 지정
         device.ipv4 = ipv4
+        device.ipv6 = ipv6
         device.interface_name = interface_name

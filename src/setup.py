@@ -1,5 +1,5 @@
 from src.adb.service.adb_service import check_connect_device_thread_job, reconnect_device_thread_job
-from src.ifconfig.service.ifconfig_service import check_connect_device_ipv4_thread_job
+from src.ifconfig.service.ifconfig_service import check_connect_device_ip_thread_job
 from src.proxy.service import proxy_service
 from src.proxy.service.proxy_service import check_connect_device_into_3proxy_thread_job
 from src.utils.module import module_utils
@@ -29,7 +29,7 @@ def thread_config():
     batch_job = BatchJob(method=check_connect_device_thread_job, interval=1)
     batch_job.start()
 
-    batch_job = BatchJob(method=check_connect_device_ipv4_thread_job, interval=1)
+    batch_job = BatchJob(method=check_connect_device_ip_thread_job, interval=1)
     batch_job.start()
 
     batch_job = BatchJob(method=reconnect_device_thread_job, interval=20)
