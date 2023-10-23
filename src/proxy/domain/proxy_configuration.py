@@ -81,7 +81,11 @@ class ProxyConfiguration:
         file.write("\n")
 
         for connection in self.connections:
-            file.write(f"proxy -p{connection.to_port} -e{connection.device.ipv4} -De{connection.device.interface_name}\n")
+            if connection.device.ipv4 is not None:
+                file.write(f"proxy -p{connection.to_port} -e{connection.device.ipv4} -4 -De{connection.device.interface_name}\n")
+
+            if connection.device.ipv6 is not None:
+                file.write(f"proxy -p{connection.to_port} -e{connection.device.ipv6} -6 -De{connection.device.interface_name}\n")
 
         if self.is_flush:
             file.write("flush\n")

@@ -73,7 +73,7 @@ def check_connect_device_into_3proxy_thread_job():
 
     for connection in configuration.connections:
         print(
-            f'configuration device: {connection.device.key} interface:{connection.device.interface_name} internal_ip:{connection.device.ipv4} to_port: {connection.to_port}')
+            f'configuration device: {connection.device.key} interface:{connection.device.interface_name} ipv4:{connection.device.ipv4} ipv6:{connection.device.ipv6} to_port: {connection.to_port}')
 
     global_params.proxy_configuration = configuration
 

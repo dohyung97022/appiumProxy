@@ -31,6 +31,8 @@ def get_usb_connection_ethernet_key(usb_connection: str) -> (bool, str):
         return False, None
 
     ethernet_keys = re.findall(f'RNDIS device, ([0-9a-z:]+)', stdout.decode('utf-8'))
+    if len(ethernet_keys) == 0:
+        return False, None
     recent_ethernet_key = ethernet_keys.pop()
 
     return True, recent_ethernet_key
