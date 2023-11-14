@@ -5,7 +5,7 @@ from src.sub_process.service import subprocess_service
 
 
 def get_device_usb_connection(adb_key: str) -> (bool, str):
-    process = subprocess_service.start(DmesgCommands.get_dmesg_device_usb_connection(adb_key), shell=True)
+    process = subprocess_service.start(DmesgCommands.get_dmesg_device_usb_connection(adb_key), shell=True, sudo=True)
     stdout, stderr = subprocess_service.communicate(process)
     subprocess_service.wait_until_finished(process)
     subprocess_service.kill(process)
@@ -22,7 +22,7 @@ def get_device_usb_connection(adb_key: str) -> (bool, str):
 
 
 def get_usb_connection_ethernet_key(usb_connection: str) -> (bool, str):
-    process = subprocess_service.start(DmesgCommands.get_usb_connection_ethernet_key(usb_connection), shell=True)
+    process = subprocess_service.start(DmesgCommands.get_usb_connection_ethernet_key(usb_connection), shell=True, sudo=True)
     stdout, stderr = subprocess_service.communicate(process)
     subprocess_service.wait_until_finished(process)
     subprocess_service.kill(process)
